@@ -30,19 +30,15 @@ const getAppointments = async (req, res) => {
 };
 
 const cancelAppointment = async (req, res) => {
-  try {
-    const appointment = await Appointment.findById(req.params.id);
-    if (!appointment)
-      return res.status(404).json({ message: "תור לא נמצא" });
-
-    if (appointment.userId.toString() !== req.user._id.toString())
-      return res.status(403).json({ message: "אין לך הרשאה למחוק תור זה" });
-
-    await appointment.remove();
-    res.json({ message: "התור בוטל בהצלחה" });
-  } catch (err) {
-    res.status(500).json({ message: "שגיאה בשרת" });
-  }
-};
-
+    try {
+      const appointment = await Appointment.findByIdAndDelete(req.params.id);
+      if (!appointment) 
+        return res.status(404).json({ message: "תור לא נמצא" });
+  
+      res.json({ message: "התור בוטל בהצלחה" });
+    } catch (err) {
+      res.status(500).json({ message: "שגיאה בשרת" });
+    }
+  };
+  
 module.exports = { bookAppointment, getAppointments, cancelAppointment };
