@@ -9,10 +9,10 @@ const ChatLogSchema = new mongoose.Schema(
         content: { type: String, required: true }
       }
     ],
-    diagnosis: { type: String }, // Store AI-generated diagnosis
-    recommendations: [{ type: String }], // List of recommendations
-    specialist: { type: String }, // Suggested specialist based on symptoms
-    finalRecommendation: { type: String } // Summary recommendation at end
+    diagnosis: { type: String },
+    recommendations: [{ type: String }], 
+    specialist: { type: String },
+    finalRecommendation: { type: String } 
   },
   { timestamps: true }
 );

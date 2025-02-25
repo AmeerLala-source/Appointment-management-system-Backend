@@ -2,9 +2,8 @@ const { OpenAI } = require("openai");
 const ChatLog = require("../models/ChatLog");
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-const MAX_HISTORY = 5; // Limit chat history to save tokens
+const MAX_HISTORY = 5; 
 
-// 🔹 Handle AI Chatbot Logic
 const chatWithAI = async (req, res) => {
   try {
     const { userId, message, endConversation } = req.body;
@@ -13,14 +12,12 @@ const chatWithAI = async (req, res) => {
       return res.status(400).json({ error: "userId and message are required" });
     }
 
-    // Retrieve user chat history
     let chatLog = await ChatLog.findOne({ userId });
 
     if (!chatLog) {
       chatLog = new ChatLog({ userId, conversation: [], diagnosis: "", specialist: "", finalRecommendation: "" });
     }
 
-    // Keep only last MAX_HISTORY messages
     const recentMessages = chatLog.conversation.slice(-MAX_HISTORY);
     const formattedHistory = recentMessages.map((chat) => ({
       role: chat.role,
@@ -29,7 +26,6 @@ const chatWithAI = async (req, res) => {
 
     formattedHistory.push({ role: "user", content: message });
 
-    // 🔹 Step 1: Generate Diagnosis
     if (!chatLog.diagnosis) {
       const diagnosisResponse = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
@@ -44,7 +40,6 @@ const chatWithAI = async (req, res) => {
       chatLog.diagnosis = diagnosisResponse.choices[0].message.content;
     }
 
-    // 🔹 Step 2: Recommend a Specialist
     if (!chatLog.specialist) {
       const specialistResponse = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
@@ -61,7 +56,6 @@ const chatWithAI = async (req, res) => {
 
     let botReply = `Diagnosis: ${chatLog.diagnosis}\nSpecialist: ${chatLog.specialist}`;
 
-    // 🔹 Step 3: Generate Final Recommendation if Conversation Ends
     if (endConversation && !chatLog.finalRecommendation) {
       const finalRecommendationResponse = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
@@ -78,7 +72,6 @@ const chatWithAI = async (req, res) => {
       botReply += `\nFinal Recommendation: ${chatLog.finalRecommendation}`;
     }
 
-    // Save chat conversation
     chatLog.conversation.push(
       { role: "user", content: message },
       { role: "assistant", content: botReply }
@@ -97,7 +90,6 @@ const chatWithAI = async (req, res) => {
   }
 };
 
-// 🔹 Retrieve Chat History
 const getChatHistory = async (req, res) => {
   try {
     const { userId } = req.params;

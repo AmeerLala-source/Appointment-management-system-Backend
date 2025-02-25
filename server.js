@@ -10,7 +10,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// ✅ Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -18,13 +17,11 @@ mongoose.connect(process.env.MONGO_URI, {
   .then(() => console.log("✅ MongoDB connected"))
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
-// ✅ Health check route
 app.get("/", (req, res) => {
   console.log("🟢 Server is running");
   res.send("Server is running");
 });
 
-// ✅ Existing Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/appointments", require("./routes/appointmentRoutes"));
 app.use("/api/ai", require("./routes/aiRoutes")); 
