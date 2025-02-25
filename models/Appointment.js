@@ -8,13 +8,13 @@ const AppointmentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 AppointmentSchema.pre("save", async function (next) {
-  const appointmentDate = new Date(this.dateTime).setHours(0, 0, 0, 0); // Normalize to just the date
+  const appointmentDate = new Date(this.dateTime).setHours(0, 0, 0, 0); 
 
   const existingAppointment = await mongoose.model("Appointment").findOne({
     userId: this.userId,
     dateTime: { 
       $gte: new Date(appointmentDate), 
-      $lt: new Date(appointmentDate + 86400000) // End of the day
+      $lt: new Date(appointmentDate + 86400000) 
     }
   });
 
