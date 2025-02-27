@@ -6,11 +6,7 @@ const cors = require("cors");
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-  origin: ["http://localhost:5000", "http://127.0.0.1:5000", "https://appointment-management-system-frontend.onrender.com"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.use(cors());
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
